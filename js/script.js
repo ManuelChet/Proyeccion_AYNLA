@@ -17,11 +17,11 @@ document.getElementById('calcular-btn').addEventListener('click', () => {
 
   let saldo = montoPrestamo;
   const tasaMensual = tasaInteres / 12;
-  let resultadoHTML = `
-    <div class="resumen">
+  let resultadoHTML = 
+    `<div class="resumen">
       <p><strong>Nombre del Cliente:</strong> ${nombreCliente}</p>
-      <p><strong>Gastos Administrativos:</strong> Q${comision.toFixed(2)}</p>
-      <p><strong>Líquido a Recibir:</strong> Q${liquido.toFixed(2)}</p>
+      <p><strong>Gastos Administrativos:</strong> Q${formatearNumero(comision)}</p>
+      <p><strong>Líquido a Recibir:</strong> Q${formatearNumero(liquido)}</p>
     </div>
     <table>
       <thead>
@@ -55,22 +55,20 @@ document.getElementById('calcular-btn').addEventListener('click', () => {
 
       saldo = Math.max(0, saldo - capital);
 
-      resultadoHTML += `
-        <tr>
+      resultadoHTML += 
+        `<tr>
           <td>${i}</td>
           <td>${fechaActual.toLocaleDateString()}</td>
-          <td>${capital.toFixed(2)}</td>
-          <td>${interes.toFixed(2)}</td>
-          <td>${total.toFixed(2)}</td>
-          <td>${saldo.toFixed(2)}</td>
-        </tr>
-      `;
+          <td>Q${formatearNumero(capital)}</td>
+          <td>Q${formatearNumero(interes)}</td>
+          <td>Q${formatearNumero(total)}</td>
+          <td>Q${formatearNumero(saldo)}</td>
+        </tr>`;
   }
 
-  resultadoHTML += `
-      </tbody>
-    </table>
-  `;
+  resultadoHTML += 
+      `</tbody>
+    </table>`;
 
   document.getElementById('resultado').innerHTML = resultadoHTML;
 });
@@ -89,7 +87,7 @@ document.getElementById('exportar-pdf-btn').addEventListener('click', () => {
 
   pdf.setFontSize(12);
   pdf.text(`Nombre del Cliente: ${nombreCliente}`, 10, 20);
-  pdf.text(`Monto del Préstamo: Q${montoPrestamo}`, 10, 30);
+  pdf.text(`Monto del Préstamo: Q${formatearNumero(parseFloat(montoPrestamo))}`, 10, 30);
   pdf.text(`Tasa de Interés Anual: ${tasaInteres}%`, 10, 40);
   pdf.text(`Número de Cuotas: ${numeroCuotas}`, 10, 50);
 
@@ -109,7 +107,7 @@ document.getElementById('exportar-pdf-btn').addEventListener('click', () => {
       tabla.querySelectorAll('tbody tr').forEach(tr => {
           const row = [];
           tr.querySelectorAll('td').forEach(td => {
-              row.push(td.innerText);
+              row.push(td.innerText.replace('Q', '').trim());
           });
           data.push(row);
       });
@@ -123,3 +121,12 @@ document.getElementById('exportar-pdf-btn').addEventListener('click', () => {
 
   pdf.save(`Proyeccion_Pagos_${nombreCliente}.pdf`);
 });
+
+// Función para formatear números con el formato de Guatemala
+function formatearNumero(numero) {
+  return new Intl.NumberFormat('es-GT', {
+    style: 'decimal',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(numero);
+}

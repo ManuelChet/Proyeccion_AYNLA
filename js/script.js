@@ -2,18 +2,21 @@ document.getElementById('calcular-btn').addEventListener('click', () => {
   const nombreCliente = document.getElementById('nombre-cliente').value;
   const montoPrestamo = parseFloat(document.getElementById('monto-prestamo').value);
   const tasaInteres = parseFloat(document.getElementById('tasa-interes').value) / 100;
-  const numeroCuotas = parseInt(document.getElementById('numero-cuotas').value);
+  const numeroCuotas = parseInt(document.getElementById('numero-cuotas').value) || 0;
   const fechaEntrega = new Date(document.getElementById('fecha-entrega').value);
-  const tasaComision = parseFloat(document.getElementById('tasa-comision').value) / 100;
+  const tasaComision = parseFloat(document.getElementById('tasa-comision').value) / 100 || 0;
+  const tasaHonorarios = parseFloat(document.getElementById('tasa-honorarios').value) / 100 || 0;
   const tipoCalculo = document.getElementById('tipo-calculo').value;
 
-  if (!montoPrestamo || !tasaInteres || !numeroCuotas || !fechaEntrega || !tasaComision || !tipoCalculo) {
+  if (!montoPrestamo || !tasaInteres || !numeroCuotas || !fechaEntrega || !tipoCalculo) {
       alert("Por favor, complete todos los campos correctamente.");
       return;
   }
 
   const comision = tasaComision * montoPrestamo;
-  const liquido = montoPrestamo - comision;
+  const honorarios = tasaHonorarios * montoPrestamo;
+  const liquido = montoPrestamo - comision - honorarios;
+
 
   let saldo = montoPrestamo;
   const tasaMensual = tasaInteres / 12;
@@ -21,6 +24,7 @@ document.getElementById('calcular-btn').addEventListener('click', () => {
     `<div class="resumen">
       <p><strong>Nombre del Cliente:</strong> ${nombreCliente}</p>
       <p><strong>Gastos Administrativos:</strong> Q${formatearNumero(comision)}</p>
+      <p><strong>Honorarios:</strong> Q${formatearNumero(honorarios)}</p>
       <p><strong>Líquido a Recibir:</strong> Q${formatearNumero(liquido)}</p>
     </div>
     <table>
